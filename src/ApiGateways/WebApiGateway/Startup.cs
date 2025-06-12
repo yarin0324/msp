@@ -34,6 +34,6 @@ public class Startup
             });
         });
 
-        app.UseOcelot().Wait();
+        app.UseOcelot().Wait(3000);
     }
 }
