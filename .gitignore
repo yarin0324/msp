@@ -1,0 +1,12 @@
+﻿################################################################################
+# 這個 .gitignore 檔案由 Microsoft(R) Visual Studio 自動建立。
+################################################################################
+
+/.vs
+/src/.vs
+/src/ApiGateways/WebApiGateway/.vs/WebApiGateway
+/src/ApiGateways/WebApiGateway/bin/Debug/net8.0
+/src/ApiGateways/WebApiGateway/obj
+/src/Services/Product.API/bin/Debug/net8.0
+/src/Services/Product.API/obj
+*.user
