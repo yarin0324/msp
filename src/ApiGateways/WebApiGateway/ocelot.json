@@ -1,0 +1,16 @@
+﻿{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/product/{everything}", //上游路徑模板
+      "UpstreamHttpMethod": [ "POST", "GET" ], //上游可允許動詞
+      "DownstreamPathTemplate": "/{everything}", //下游路徑模板
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ]
+    }
+  ]
+}
