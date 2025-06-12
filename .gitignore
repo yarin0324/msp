@@ -10,3 +10,11 @@
 /src/Services/Product.API/bin/Debug/net8.0
 /src/Services/Product.API/obj
 *.user
+/src/Services/Identity.API/bin/Debug/net8.0
+/src/Services/Identity.API/obj
+/src/Services/Basket.API/obj
+/src/Services/Order.API/obj
+/src/Services/Payment.API/obj
+/src/Services/Order.API/bin/Debug/net8.0
+/src/Services/Basket.API/bin/Debug/net8.0
+/src/Services/Payment.API/bin/Debug/net8.0
