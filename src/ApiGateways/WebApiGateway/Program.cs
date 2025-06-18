@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
-using Serilog;
 
 namespace WebApiGateway
 {
@@ -22,13 +21,13 @@ namespace WebApiGateway
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "發生未預期錯誤...");
+                //Log.Fatal(ex, "發生未預期錯誤...");
 
                 return 1;
             }
             finally
             {
-                Log.CloseAndFlush();
+                //Log.CloseAndFlush();
             }
         }
 
