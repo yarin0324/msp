@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "Services\Bask
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Core", "Services\BasketService\Basket.Core\Basket.Core.csproj", "{3A92D8B9-B56F-083C-43C6-DF392FD837F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Application", "Services\BasketService\Basket.Application\Basket.Application.csproj", "{9117B66D-578F-4573-BADB-6FE11CDE5463}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Adapters", "Services\BasketService\Basket.Application\Basket.Adapters.csproj", "{9117B66D-578F-4573-BADB-6FE11CDE5463}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Infrastructure", "Services\BasketService\Basket.Infrastructure\Basket.Infrastructure.csproj", "{ACE38C98-74E7-4B08-B0E5-25CA7CD14CC7}"
 EndProject
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.API", "Services\Order
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Core", "Services\OrderService\Order.Core\Order.Core.csproj", "{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Application", "Services\OrderService\Order.Application\Order.Application.csproj", "{B87CF1CB-67EC-417E-8DAB-013F066ADF50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Adapters", "Services\OrderService\Order.Application\Order.Adapters.csproj", "{B87CF1CB-67EC-417E-8DAB-013F066ADF50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Infrastructure", "Services\OrderService\Order.Infrastructure\Order.Infrastructure.csproj", "{69C0F65E-D6B7-4B40-A804-439EF94BCD47}"
 EndProject

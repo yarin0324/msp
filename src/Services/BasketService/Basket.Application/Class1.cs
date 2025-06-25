@@ -1,4 +1,4 @@
-﻿namespace Basket.Application
+﻿namespace Basket.Adapters
 {
     public class Class1
     {
