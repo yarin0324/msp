@@ -1,4 +1,5 @@
 ﻿using Consul;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -23,6 +24,14 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
+            });
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

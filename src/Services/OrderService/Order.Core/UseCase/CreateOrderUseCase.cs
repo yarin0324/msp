@@ -22,6 +22,8 @@ namespace Order.Core.UseCase
 
         public async Task<ProductOrder> ExecuteAsync(decimal amount)
         {
+            // TODO 可檢核Customer 存不存在、Currency是否正確等等
+
             var order = new ProductOrder(amount);
 
             // 新增訂單資料

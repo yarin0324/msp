@@ -9,13 +9,13 @@ namespace Order.Core.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ProductOrder> GetByIdAsync(long id);
+        Task<ProductOrder?> GetByIdAsync(long id);
 
         /// <summary>
         /// 新增訂單
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        Task<ProductOrder> AddAsync(ProductOrder order);
+        Task AddAsync(ProductOrder order);
     }
 }
