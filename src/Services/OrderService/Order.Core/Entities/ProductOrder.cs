@@ -1,4 +1,4 @@
-﻿namespace Order.Core.Entities
+﻿namespace OrderService.Domain.Entities
 {
     /// <summary>
     /// 訂單

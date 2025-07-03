@@ -1,10 +1,9 @@
 ﻿using Consul;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
+using OrderService.WebApi.DependencyInjection;
 using Serilog;
-using Serilog.Events;
 
-namespace Order.API;
+namespace OrderService.WebApi;
 
 public class Startup
 {
@@ -24,6 +23,8 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        ServiceRegistration.AddApplicationServices(services);
 
         services.AddMassTransit(x =>
         {
@@ -75,13 +76,13 @@ public class Startup
 
         var registration = new AgentServiceRegistration
         {
-            ID = $"basket-service-{Guid.NewGuid()}",
-            Name = "Basket Service",
+            ID = $"order-service-{Guid.NewGuid()}",
+            Name = "Order Service",
             Address = "host.docker.internal", // 配置為 Docker 環境
-            Port = 5079,
+            Port = 5125,
             Check = new AgentServiceCheck
             {
-                HTTP = "http://host.docker.internal:5079/health",
+                HTTP = "http://host.docker.internal:5125/health",
                 Interval = TimeSpan.FromSeconds(10),
                 Timeout = TimeSpan.FromSeconds(5), // 增加超時
                 DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1) // 失敗後 1 分鐘移除服務

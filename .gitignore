@@ -41,3 +41,5 @@
 /src/Services/OrderService/Order.Tests/obj
 /src/Services/OrderService/Order.Core/bin/Debug/net8.0
 /src/Services/BasketService/Basket.Tests/bin/Debug/net8.0
+/src/Services/OrderService/Order.UseCase/bin/Debug/net8.0
+/src/Services/OrderService/Order.UseCase/obj

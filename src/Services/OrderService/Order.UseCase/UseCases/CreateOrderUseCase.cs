@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Order.Core.Entities;
-using Order.Core.Events;
-using Order.Core.Interfaces;
+﻿using OrderService.Domain.Common;
+using OrderService.Domain.Entities;
+using OrderService.Domain.Events;
+using OrderService.Domain.Repositories;
+using OrderService.Domain.UseCase;
 
-namespace Order.Core.UseCase
+namespace OrderService.Application.UseCases
 {
     public class CreateOrderUseCase : ICreateOrderUseCase
     {
@@ -20,7 +17,7 @@ namespace Order.Core.UseCase
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<ProductOrder> ExecuteAsync(decimal amount)
+        public async Task<Result<ProductOrder>> ExecuteAsync(decimal amount)
         {
             // TODO 可檢核Customer 存不存在、Currency是否正確等等
 
@@ -37,7 +34,7 @@ namespace Order.Core.UseCase
                 CreateTime = order.CreateTime
             });
 
-            return order;
+            return Result<ProductOrder>.Success(order);
         }
     }
 }

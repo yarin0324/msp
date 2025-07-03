@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Order.Core.Entities;
-using Order.Core.Interfaces;
+﻿using OrderService.Domain.Common;
+using OrderService.Domain.Entities;
+using OrderService.Domain.Repositories;
+using OrderService.Domain.UseCase;
 
-namespace Order.Core.UseCase
+namespace OrderService.Application.UseCases
 {
     public class GetOrderUseCase : IGetOrderUseCase
     {
@@ -17,7 +14,7 @@ namespace Order.Core.UseCase
             this._orderRepository = orderRepository;
         }
 
-        public async Task<ProductOrder> ExecuteAsync(long id)
+        public async Task<Result<ProductOrder>> ExecuteAsync(long id)
         {
             var order = await _orderRepository.GetByIdAsync(id);
 
@@ -26,7 +23,7 @@ namespace Order.Core.UseCase
                 throw new Exception($"Order with ID {id} does not exist.");
             }
 
-            return order;
+            return Result<ProductOrder>.Success(order);
         }
     }
 }

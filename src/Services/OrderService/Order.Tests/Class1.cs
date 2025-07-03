@@ -1,4 +1,4 @@
-﻿namespace Order.Tests
+﻿namespace OrderService.Tests
 {
     public class Class1
     {

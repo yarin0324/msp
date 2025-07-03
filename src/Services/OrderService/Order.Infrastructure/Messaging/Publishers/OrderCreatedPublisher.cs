@@ -1,7 +1,7 @@
 ﻿using MassTransit;
-using Order.Core.Interfaces;
+using OrderService.Domain.UseCase;
 
-namespace Order.Infrastructure.Messaging.Publishers
+namespace OrderService.Infrastructure.Messaging.Publishers
 {
     public class OrderCreatedPublisher : IEventPublisher
     {

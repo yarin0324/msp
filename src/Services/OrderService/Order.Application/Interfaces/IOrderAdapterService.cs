@@ -1,7 +1,4 @@
-﻿using FluentResults;
-using Order.Adapters.DTOs;
-
-namespace Order.Adapters.Interfaces
+﻿namespace Order.UseCase.Interfaces
 {
     public interface IOrderAdapterService
     {

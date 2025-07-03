@@ -1,11 +1,11 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Order.Core.Entities;
-using Order.Core.Interfaces;
-using System.Data;
+using OrderService.Domain.Entities;
+using OrderService.Domain.Repositories;
 
-namespace Order.Infrastructure.Repositories
+namespace OrderService.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

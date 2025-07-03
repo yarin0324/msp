@@ -1,6 +1,6 @@
-﻿namespace OrderService.Domain.Events
+﻿namespace OrderService.WebApi.DTOs
 {
-    public class OrderCreatedEvent
+    public class OrderDto
     {
         public long Id { get; set; }
         public decimal Amount { get; set; }

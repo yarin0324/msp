@@ -21,15 +21,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Infrastructure", "Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Tests", "Services\BasketService\Basket.Tests\Basket.Tests.csproj", "{21F790FC-6C99-49A5-9417-AB2271754876}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.API", "Services\OrderService\Order.API\Order.API.csproj", "{72883EA1-EA6D-EB81-17D5-9232EA176E1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.WebApi", "Services\OrderService\Order.API\OrderService.WebApi.csproj", "{72883EA1-EA6D-EB81-17D5-9232EA176E1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Core", "Services\OrderService\Order.Core\Order.Core.csproj", "{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Domain", "Services\OrderService\Order.Core\OrderService.Domain.csproj", "{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Adapters", "Services\OrderService\Order.Application\Order.Adapters.csproj", "{B87CF1CB-67EC-417E-8DAB-013F066ADF50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Infrastructure", "Services\OrderService\Order.Infrastructure\OrderService.Infrastructure.csproj", "{69C0F65E-D6B7-4B40-A804-439EF94BCD47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Infrastructure", "Services\OrderService\Order.Infrastructure\Order.Infrastructure.csproj", "{69C0F65E-D6B7-4B40-A804-439EF94BCD47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Tests", "Services\OrderService\Order.Tests\OrderService.Tests.csproj", "{F9392B82-B0B9-4B0F-8808-568F56829191}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.Tests", "Services\OrderService\Order.Tests\Order.Tests.csproj", "{F9392B82-B0B9-4B0F-8808-568F56829191}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Application", "Services\OrderService\Order.UseCase\OrderService.Application.csproj", "{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,10 +81,6 @@ Global
 		{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD5AD5E6-329B-4791-81A1-2BD84AF88FE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B87CF1CB-67EC-417E-8DAB-013F066ADF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B87CF1CB-67EC-417E-8DAB-013F066ADF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B87CF1CB-67EC-417E-8DAB-013F066ADF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B87CF1CB-67EC-417E-8DAB-013F066ADF50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69C0F65E-D6B7-4B40-A804-439EF94BCD47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69C0F65E-D6B7-4B40-A804-439EF94BCD47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C0F65E-D6B7-4B40-A804-439EF94BCD47}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -93,6 +89,10 @@ Global
 		{F9392B82-B0B9-4B0F-8808-568F56829191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9392B82-B0B9-4B0F-8808-568F56829191}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9392B82-B0B9-4B0F-8808-568F56829191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
-﻿using Order.Adapters.DTOs;
-using OrderService.Domain.Entities;
+﻿using OrderService.Domain.Entities;
+using OrderService.WebApi.DTOs;
 
-namespace Order.Adapters.Mappers
+namespace OrderService.WebApi.Mappers
 {
     public static class OrderMappers
     {

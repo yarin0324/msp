@@ -1,7 +1,7 @@
 ﻿using MassTransit;
-using Order.Core.Events;
+using OrderService.Domain.Events;
 
-namespace Order.Infrastructure.Messaging.Consumers
+namespace OrderService.Infrastructure.Messaging.Consumers
 {
     /// <summary>
     /// 暫時放，應該放在支付服務裡

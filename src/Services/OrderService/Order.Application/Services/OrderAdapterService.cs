@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 using Order.Adapters.DTOs;
-using Order.Adapters.Interfaces;
-using Order.Core.Interfaces;
+using Order.UseCase.Interfaces;
+using OrderService.Domain.UseCase;
 
 namespace Order.Adapters.Services
 {

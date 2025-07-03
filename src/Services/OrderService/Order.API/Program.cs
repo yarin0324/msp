@@ -1,7 +1,7 @@
 using Serilog;
 using Winton.Extensions.Configuration.Consul;
 
-namespace Order.API
+namespace OrderService.WebApi
 {
     internal abstract class Program
     {

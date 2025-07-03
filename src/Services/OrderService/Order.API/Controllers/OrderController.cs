@@ -1,46 +1,45 @@
-﻿using FluentResults;
-using Microsoft.AspNetCore.Mvc;
-using Order.Adapters.DTOs;
-using Order.Adapters.Interfaces;
-using Order.Adapters.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using OrderService.Domain.Common;
+using OrderService.WebApi.DTOs;
+using OrderService.WebApi.Services;
 
-namespace Order.API.Controllers
+namespace OrderService.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderAdapterService _orderAdapterService;
+        private readonly OrderServiceFacade _orderServiceFacade;
 
-        public OrderController(IOrderAdapterService orderAdapterService)
+        public OrderController(OrderServiceFacade orderServiceFacade)
         {
-            this._orderAdapterService = orderAdapterService;
+            this._orderServiceFacade = orderServiceFacade;
         }
-
-        [HttpPost]
+        
+        [HttpPost(Name = "CreateOrder")]
         public async Task<IActionResult> CreateOrder(OrderCreationDto? creation)
         {
             if(!ModelState.IsValid)
-                return BadRequest(Result.Fail("Invalid model state.").Errors);
+                return BadRequest(Result<IActionResult>.Failure("Invalid model state."));
 
-            var result = await _orderAdapterService.CreateOrderAsync(creation);
+            var result = await _orderServiceFacade.CreateOrderAsync(creation);
 
             if (!result.IsSuccess)
             {
-                // 將錯誤訊息轉成陣列，以符合API回應格式
-                return BadRequest(new { errors = result.Errors.Select(e => e.Message) });
+                return BadRequest(new { errors = result.Message });
             }
 
             return CreatedAtAction(nameof(CreateOrder), new { result.Value.Id }, result.Value);
         }
 
+        [HttpGet(Name = "GetOrder")]
         public async Task<IActionResult> GetOrder(long id)
         {
-            var result = await _orderAdapterService.GetOrderAsync(id);
+            var result = await _orderServiceFacade.GetOrderAsync(id);
 
             if (!result.IsSuccess)
             {
-                return BadRequest(new { errors = result.Errors.Select(e => e.Message) });
+                return BadRequest(new { errors = result.Message });
             }
 
             return Ok(result);
