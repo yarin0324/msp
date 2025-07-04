@@ -17,11 +17,11 @@ namespace OrderService.Application.UseCases
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<Result<ProductOrder>> ExecuteAsync(decimal amount)
+        public async Task<Result<ProductOrder>> ExecuteAsync(decimal amount, string currency, string customerId)
         {
             // TODO 可檢核Customer 存不存在、Currency是否正確等等
 
-            var order = new ProductOrder(amount);
+            var order = new ProductOrder(amount, currency, customerId);
 
             // 新增訂單資料
             await _orderRepository.AddAsync(order);
@@ -31,6 +31,8 @@ namespace OrderService.Application.UseCases
             {
                 Id = order.Id,
                 Amount = order.Amount,
+                Currency = order.Currency,
+                CustomerId = order.CustomerId,
                 CreateTime = order.CreateTime
             });
 

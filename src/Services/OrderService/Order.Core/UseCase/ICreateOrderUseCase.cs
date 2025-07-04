@@ -5,6 +5,6 @@ namespace OrderService.Domain.UseCase
 {
     public interface ICreateOrderUseCase
     {
-        Task<Result<ProductOrder>> ExecuteAsync(decimal amount);
+        Task<Result<ProductOrder>> ExecuteAsync(decimal amount, string currency, string customerId);
     }
 }

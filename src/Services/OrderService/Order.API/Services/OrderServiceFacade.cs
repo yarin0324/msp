@@ -18,7 +18,7 @@ namespace OrderService.WebApi.Services
 
         public async Task<Result<OrderDto>> CreateOrderAsync(OrderCreationDto order)
         {
-            var result = await _createOrderUseCase.ExecuteAsync(order.Amount.Value);
+            var result = await _createOrderUseCase.ExecuteAsync(order.Amount!.Value, order.Currency, order.CustomerId);
             return Result<OrderDto>.Success(OrderMappers.ToDto(result.Value));
         }
 

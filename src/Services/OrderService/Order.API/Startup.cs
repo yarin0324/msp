@@ -1,5 +1,7 @@
 ﻿using Consul;
 using MassTransit;
+using OrderService.Infrastructure.Messaging.Consumers;
+using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
 using Serilog;
 
@@ -33,6 +35,52 @@ public class Startup
                 cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
             });
         });
+
+        //services.AddMassTransit(x =>
+        //{
+        //    x.UsingRabbitMq((context, cfg) =>
+        //    {
+        //        cfg.Host("rabbitmq://localhost", h =>
+        //        {
+        //            h.Username("guest");
+        //            h.Password("guest");
+        //            h.Heartbeat(TimeSpan.FromSeconds(10));
+        //            h.RequestedConnectionTimeout(TimeSpan.FromSeconds(10));
+        //        });
+        //        cfg.UseMessageRetry(r => r.Intervals(100, 200, 500, 1000));
+        //    });
+        //});
+
+        // 配置 MassTransit
+        //services.AddMassTransit(x =>
+        //{
+        //    // 註冊消費者
+        //    x.AddConsumer<OrderCreatedConsumer>();
+
+        //    // 配置 RabbitMQ
+        //    x.UsingRabbitMq((context, cfg) =>
+        //    {
+        //        cfg.Host("rabbitmq://localhost", h =>
+        //        {
+        //            h.Username("guest");
+        //            h.Password("guest");
+        //            h.Heartbeat(TimeSpan.FromSeconds(10));
+        //            h.RequestedConnectionTimeout(TimeSpan.FromSeconds(10));
+        //        });
+
+        //        // 配置消費者隊列
+        //        cfg.ReceiveEndpoint("order-created-queue", e =>
+        //        {
+        //            e.ConfigureConsumer<OrderCreatedConsumer>(context);
+        //        });
+
+        //        // 配置重試策略
+        //        cfg.UseMessageRetry(r => r.Intervals(100, 200, 500, 1000));
+        //    });
+        //});
+
+        // 註冊發布者
+        services.AddScoped<OrderCreatedPublisher>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

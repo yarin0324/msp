@@ -20,9 +20,9 @@ namespace OrderService.Infrastructure.Repositories
         {
             using IDbConnection dbConnection = new SqlConnection(_connectionString);
 
-            var sqlCommand = @"INSERT INTO Orders (Amount, CreateTime) 
+            var sqlCommand = @"INSERT INTO Orders (Amount, CustomerId, Currency, CreateTime) 
                                OUTPUT INSERTED.Id 
-                               VALUES (@Amount, @CreateTime)";
+                               VALUES (@Amount, @CustomerId, @Currency, @CreateTime)";
 
             var id = await dbConnection.QuerySingleAsync<long>(sqlCommand, order);
 

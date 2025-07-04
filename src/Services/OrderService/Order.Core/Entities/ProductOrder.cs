@@ -8,9 +8,11 @@
     {
         public long Id { get; private set; }
         public decimal Amount { get; private set; }
+        public string Currency { get; private set; }
+        public string CustomerId { get; private set; }
         public DateTime CreateTime { get; private set; }
 
-        public ProductOrder(decimal amount)
+        public ProductOrder(decimal amount, string currency, string customerId)
         {
             if (amount <= 0)
             {
@@ -18,6 +20,8 @@
             }
 
             this.Amount = amount;
+            this.Currency = currency;
+            this.CustomerId = customerId;
             this.CreateTime = DateTime.Now;
         }
     }

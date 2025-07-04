@@ -20,7 +20,7 @@ namespace OrderService.WebApi.Controllers
         public async Task<IActionResult> CreateOrder(OrderCreationDto? creation)
         {
             if(!ModelState.IsValid)
-                return BadRequest(Result<IActionResult>.Failure("Invalid model state."));
+                return BadRequest(Result<ActionResult>.Failure("Invalid model state."));
 
             var result = await _orderServiceFacade.CreateOrderAsync(creation);
 
@@ -29,7 +29,7 @@ namespace OrderService.WebApi.Controllers
                 return BadRequest(new { errors = result.Message });
             }
 
-            return CreatedAtAction(nameof(CreateOrder), new { result.Value.Id }, result.Value);
+            return Ok(result);
         }
 
         [HttpGet(Name = "GetOrder")]
