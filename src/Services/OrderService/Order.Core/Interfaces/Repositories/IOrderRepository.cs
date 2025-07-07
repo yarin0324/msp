@@ -16,6 +16,6 @@ namespace OrderService.Domain.Interfaces.Repositories
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        Task AddAsync(Order order);
+        Task<long> AddAsync(Order order);
     }
 }

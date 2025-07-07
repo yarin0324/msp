@@ -29,7 +29,14 @@ namespace OrderService.Application.UseCases
                 command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity}).ToList());
 
             // 新增訂單資料
-            await _orderRepository.AddAsync(order);
+            var orderId = await _orderRepository.AddAsync(order);
+
+            order.SetOrderId(orderId);
+
+            foreach (var item in order.Items)
+            {
+                item.SetOrderId(orderId);
+            }
 
             // 發佈創建訂單事件
             await _eventPublisher.PublishAsync(new OrderCreatedEvent

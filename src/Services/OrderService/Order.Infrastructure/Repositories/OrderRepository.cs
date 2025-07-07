@@ -16,7 +16,7 @@ namespace OrderService.Infrastructure.Repositories
             _connectionString = configuration.GetConnectionString("OrderDb");
         }
 
-        public async Task AddAsync(Order order)
+        public async Task<long> AddAsync(Order order)
         {
             await using var dbConnection = new SqlConnection(_connectionString);
             await dbConnection.OpenAsync();
@@ -25,24 +25,22 @@ namespace OrderService.Infrastructure.Repositories
             try
             {
                 var sqlCommand = @"INSERT INTO Orders (Amount, CustomerId, Currency, CreateTime) 
-                               OUTPUT INSERTED.OrderId
-                               VALUES (@Amount, @CustomerId, @Currency, @CreateTime)";
+                                   OUTPUT INSERTED.OrderId
+                                   VALUES (@Amount, @CustomerId, @Currency, @CreateTime)";
 
                 var orderId = await dbConnection.QuerySingleAsync<long>(sqlCommand, order, transaction);
 
-                order.GetType().GetProperty("OrderId")!.SetValue(order, orderId);
-
                 sqlCommand = @"INSERT INTO OrderItems (OrderId, ProductId, Quantity) 
-                           VALUES (@OrderId, @ProductId, @Quantity)";
+                               VALUES (@OrderId, @ProductId, @Quantity)";
 
                 foreach (var item in order.Items)
                 {
-                    item.SetOrderId(orderId);
-                    await dbConnection.ExecuteAsync(sqlCommand, order.Items, transaction);
+                    await dbConnection.ExecuteAsync(sqlCommand, order.Items.Select(i => new { OrderId = orderId, i.ProductId, i.Quantity }), transaction);
                 }
 
                 await transaction.CommitAsync();
-                order.SetOrderId(orderId);
+
+                return orderId;
             }
             catch
             {
