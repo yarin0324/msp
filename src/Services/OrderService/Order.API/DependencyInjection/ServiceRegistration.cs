@@ -1,6 +1,4 @@
-﻿using OrderService.WebApi.Services;
-
-namespace OrderService.WebApi.DependencyInjection
+﻿namespace OrderService.WebApi.DependencyInjection
 {
     /// <summary>
     /// 自動化注入: 使用Scrutor套件實作
@@ -29,7 +27,7 @@ namespace OrderService.WebApi.DependencyInjection
                 .WithScopedLifetime()
                 // 掃描 WebApi 層的服務（Facade）
                 .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("OrderService.WebApi.Services"))
+                .AddClasses(classes => classes.InNamespaces("OrderService.WebApi.Facades"))
                 .AsSelf()
                 .WithScopedLifetime());
 

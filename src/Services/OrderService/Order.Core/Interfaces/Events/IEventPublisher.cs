@@ -1,4 +1,4 @@
-﻿namespace OrderService.Domain.UseCase
+﻿namespace OrderService.Domain.Interfaces.Events
 {
     public interface IEventPublisher
     {

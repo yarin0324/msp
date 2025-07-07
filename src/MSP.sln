@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Tests", "Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Application", "Services\OrderService\Order.UseCase\OrderService.Application.csproj", "{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.Domain", "Services\InventoryService\InventoryService.Domain\InventoryService.Domain.csproj", "{29F89D98-09F5-416D-885B-CB6E12670EE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83BBA2A9-D027-4C31-B134-BC2B7D3142EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F89D98-09F5-416D-885B-CB6E12670EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F89D98-09F5-416D-885B-CB6E12670EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F89D98-09F5-416D-885B-CB6E12670EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F89D98-09F5-416D-885B-CB6E12670EE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using OrderService.Domain.UseCase;
+using OrderService.Domain.Interfaces.Events;
 
 namespace OrderService.Infrastructure.Messaging.Publishers
 {

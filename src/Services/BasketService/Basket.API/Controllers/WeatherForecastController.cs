@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace Basket.API.Controllers
 {

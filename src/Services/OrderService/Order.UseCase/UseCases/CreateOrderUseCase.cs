@@ -1,8 +1,12 @@
-﻿using OrderService.Domain.Common;
+﻿using OrderService.Application.Commands;
+using OrderService.Application.Dtos;
+using OrderService.Application.Events;
+using OrderService.Application.Interfaces;
+using OrderService.Domain.Common;
 using OrderService.Domain.Entities;
-using OrderService.Domain.Events;
-using OrderService.Domain.Repositories;
-using OrderService.Domain.UseCase;
+using OrderService.Domain.Interfaces.Events;
+using OrderService.Domain.Interfaces.Repositories;
+using OrderCreatedEvent = OrderService.Application.Events.OrderCreatedEvent;
 
 namespace OrderService.Application.UseCases
 {
@@ -17,11 +21,12 @@ namespace OrderService.Application.UseCases
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<Result<ProductOrder>> ExecuteAsync(decimal amount, string currency, string customerId)
+        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command)
         {
             // TODO 可檢核Customer 存不存在、Currency是否正確等等
 
-            var order = new ProductOrder(amount, currency, customerId);
+            var order = new Order(command.Amount, command.Currency, command.CustomerId, 
+                command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity}).ToList());
 
             // 新增訂單資料
             await _orderRepository.AddAsync(order);
@@ -29,14 +34,22 @@ namespace OrderService.Application.UseCases
             // 發佈創建訂單事件
             await _eventPublisher.PublishAsync(new OrderCreatedEvent
             {
-                Id = order.Id,
+                Id = order.OrderId,
                 Amount = order.Amount,
                 Currency = order.Currency,
                 CustomerId = order.CustomerId,
-                CreateTime = order.CreateTime
+                CreateTime = order.CreateTime,
+                Items = order.Items.Select(i => new OrderItemEvent
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity
+                }).ToList()
             });
 
-            return Result<ProductOrder>.Success(order);
+            return Result<OrderResponseDto>.Success(new OrderResponseDto
+            {
+                OrderId = order.OrderId
+            });
         }
     }
 }

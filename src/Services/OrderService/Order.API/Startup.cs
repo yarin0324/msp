@@ -1,6 +1,5 @@
 ﻿using Consul;
 using MassTransit;
-using OrderService.Infrastructure.Messaging.Consumers;
 using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
 using Serilog;

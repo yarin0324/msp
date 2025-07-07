@@ -1,6 +1,6 @@
 ﻿using OrderService.Domain.Entities;
 
-namespace OrderService.Domain.Repositories
+namespace OrderService.Domain.Interfaces.Repositories
 {
     public interface IOrderRepository
     {
@@ -9,13 +9,13 @@ namespace OrderService.Domain.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ProductOrder?> GetByIdAsync(long id);
+        Task<Order?> GetByIdAsync(long id);
 
         /// <summary>
         /// 新增訂單
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        Task AddAsync(ProductOrder order);
+        Task AddAsync(Order order);
     }
 }
