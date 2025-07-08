@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using OrderService.Domain.Entities;
@@ -24,19 +23,16 @@ namespace OrderService.Infrastructure.Repositories
 
             try
             {
-                var sqlCommand = @"INSERT INTO Orders (Amount, CustomerId, Currency, CreateTime) 
-                                   OUTPUT INSERTED.OrderId
-                                   VALUES (@Amount, @CustomerId, @Currency, @CreateTime)";
+                const string addOrderCommand = @"INSERT INTO Orders (Amount, CustomerId, Currency, CreateTime) 
+                                                 OUTPUT INSERTED.OrderId
+                                                 VALUES (@Amount, @CustomerId, @Currency, @CreateTime)";
 
-                var orderId = await dbConnection.QuerySingleAsync<long>(sqlCommand, order, transaction);
+                var orderId = await dbConnection.QuerySingleAsync<long>(addOrderCommand, order, transaction);
 
-                sqlCommand = @"INSERT INTO OrderItems (OrderId, ProductId, Quantity) 
-                               VALUES (@OrderId, @ProductId, @Quantity)";
+                const string addOrderItemCommand = @"INSERT INTO OrderItems (OrderId, ProductId, Quantity) 
+                                                     VALUES (@OrderId, @ProductId, @Quantity)";
 
-                foreach (var item in order.Items)
-                {
-                    await dbConnection.ExecuteAsync(sqlCommand, order.Items.Select(i => new { OrderId = orderId, i.ProductId, i.Quantity }), transaction);
-                }
+                await dbConnection.ExecuteAsync(addOrderItemCommand, order.Items.Select(i => new { OrderId = orderId, i.ProductId, i.Quantity }), transaction);
 
                 await transaction.CommitAsync();
 
@@ -55,18 +51,18 @@ namespace OrderService.Infrastructure.Repositories
             await dbConnection.OpenAsync();
             await using var transaction = await dbConnection.BeginTransactionAsync();
 
-            var sqlCommand = @"SELECT TOP 1 * FROM Orders WHERE OrderId = @OrderId";
+            const string getOrderCommand = @"SELECT TOP 1 * FROM Orders WHERE OrderId = @OrderId";
 
-            var order = await dbConnection.QuerySingleOrDefaultAsync<Order>(sqlCommand, new { orderId }, transaction);
+            var order = await dbConnection.QuerySingleOrDefaultAsync<Order>(getOrderCommand, new { orderId }, transaction);
 
             if (order == null)
             {
                 return null;
             }
 
-            sqlCommand = "SELECT * FROM OrderItems WHERE OrderId = @OrderId";
+            const string getOrderItemCommand = "SELECT * FROM OrderItems WHERE OrderId = @OrderId";
 
-            var orderItems = await dbConnection.QueryAsync<OrderItem>(sqlCommand, new { OrderId = orderId }, transaction);
+            var orderItems = await dbConnection.QueryAsync<OrderItem>(getOrderItemCommand, new { OrderId = orderId }, transaction);
 
             order.Items = orderItems.ToList();
 
