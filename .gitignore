@@ -45,3 +45,5 @@
 /src/Services/OrderService/Order.UseCase/obj
 /src/Services/InventoryService/InventoryService.Domain/bin/Debug/net8.0
 /src/Services/InventoryService/InventoryService.Domain/obj
+/src/Services/Common/bin/Debug/net8.0
+/src/Services/Common/obj
