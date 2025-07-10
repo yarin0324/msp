@@ -1,5 +1,4 @@
-﻿using OrderService.Application.Commands;
-using OrderService.Application.Dtos;
+﻿using OrderService.Application.Dtos;
 using OrderService.Application.Queries;
 using OrderService.Domain.Common;
 

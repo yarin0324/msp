@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.7.14.7" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
     <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />

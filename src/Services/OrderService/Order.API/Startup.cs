@@ -1,9 +1,5 @@
-﻿using Common.MediatR.Behaviors;
-using Consul;
+﻿using Consul;
 using MassTransit;
-using MediatR;
-using OrderService.Application.Commands;
-using OrderService.Application.Queries;
 using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
 using Serilog;
@@ -34,17 +30,7 @@ public class Startup
             logging.AddConsole(); // 確保控制台日誌輸出
             logging.AddDebug();   // 支援除錯日誌
         });
-
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-            cfg.RegisterServicesFromAssembly(typeof(OrderService.Application.UseCases.CreateOrderUseCase).Assembly);
-            cfg.RegisterServicesFromAssembly(typeof(OrderService.Application.UseCases.GetOrderUseCase).Assembly);
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-        });
-
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-
+        
         ServiceRegistration.AddApplicationServices(services);
 
         services.AddMassTransit(x =>
