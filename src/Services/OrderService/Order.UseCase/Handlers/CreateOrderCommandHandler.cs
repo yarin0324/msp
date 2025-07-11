@@ -1,35 +1,33 @@
-﻿using OrderService.Application.Commands;
+﻿using MediatR;
+using OrderService.Application.Commands;
 using OrderService.Application.Dtos;
 using OrderService.Application.Events;
-using OrderService.Application.Interfaces;
 using OrderService.Domain.Common;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interfaces.Events;
 using OrderService.Domain.Interfaces.Repositories;
-using OrderCreatedEvent = OrderService.Application.Events.OrderCreatedEvent;
 
-namespace OrderService.Application.UseCases
+namespace OrderService.Application.Handlers
 {
     /// <summary>
-    /// 傳統UseCase作法
+    /// 透過Mediator 實作 CQRS 的作法
+    /// Mediator 類似 Facade，Web Api端可省去Facade，但專案規模大時，複雜度會上升
     /// </summary>
-    public class CreateOrderUseCase : ICreateOrderUseCase
+    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponseDto>>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IEventPublisher _eventPublisher;
 
-        public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher)
+        public CreateOrderCommandHandler(IOrderRepository orderRepository, IEventPublisher eventPublisher)
         {
             this._orderRepository = orderRepository;
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command)
+        public async Task <Result<OrderResponseDto>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
         {
-            // TODO 可檢核Customer 存不存在、Currency是否正確等等
-
-            var order = new Order(command.Amount, command.Currency, command.CustomerId, 
-                command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity}).ToList());
+            var order = new Order(command.Amount, command.Currency, command.CustomerId,
+                command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity }).ToList());
 
             // 新增訂單資料
             var orderId = await _orderRepository.AddAsync(order);

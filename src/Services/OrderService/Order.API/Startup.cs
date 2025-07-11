@@ -1,5 +1,9 @@
-﻿using Consul;
+﻿using System.Reflection;
+using Consul;
 using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using OrderService.Application.Commands;
+using OrderService.Application.Handlers;
 using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
 using Serilog;
@@ -33,6 +37,9 @@ public class Startup
         
         ServiceRegistration.AddApplicationServices(services);
 
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetOrderQueryHandler).Assembly));
+        
         services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>
