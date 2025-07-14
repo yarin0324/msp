@@ -27,9 +27,9 @@ namespace OrderService.WebApi.Controllers
             if(!ModelState.IsValid)
                 return BadRequest(Result<ActionResult>.Failure("Invalid model state."));
 
-            var result = await _mediator.Send(OrderMappers.ToCommand(creation));
+            //var result = await _mediator.Send(OrderMappers.ToCommand(creation));
 
-            //var result = await _orderApiService.CreateOrderAsync(creation);
+            var result = await _orderApiService.CreateOrderAsync(creation);
 
             if (!result.IsSuccess)
             {

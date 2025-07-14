@@ -15,7 +15,9 @@
             services.Scan(scan => scan
                 // 掃描 Application 層的用例實現
                 .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("OrderService.Application.UseCases"))
+                .AddClasses(classes => classes.InNamespaces(
+                    "OrderService.Application.UseCases",
+                    "OrderService.Application.Validators"))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
                 // 掃描 Infrastructure 層的技術實現

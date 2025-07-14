@@ -1,11 +1,16 @@
 ﻿using System.Reflection;
 using Consul;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.Commands;
 using OrderService.Application.Handlers;
+using OrderService.Application.Validators;
 using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
+using OrderService.WebApi.DTOs;
+using OrderService.WebApi.Validators;
 using Serilog;
 
 namespace OrderService.WebApi;
@@ -47,6 +52,10 @@ public class Startup
                 cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
             });
         });
+
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<CreateOrderCommandTestValidator>();
+        //services.AddValidatorsFromAssemblyContaining<CreateOrderRequestDtoValidator>();
 
         //services.AddMassTransit(x =>
         //{

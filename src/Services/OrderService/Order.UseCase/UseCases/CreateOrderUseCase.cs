@@ -1,4 +1,5 @@
-﻿using OrderService.Application.Commands;
+﻿using FluentValidation;
+using OrderService.Application.Commands;
 using OrderService.Application.Dtos;
 using OrderService.Application.Events;
 using OrderService.Application.Interfaces;
@@ -17,16 +18,20 @@ namespace OrderService.Application.UseCases
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IEventPublisher _eventPublisher;
-
-        public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher)
+        private readonly IValidator<CreateOrderCommandTest> _validator;
+        public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher, IValidator<CreateOrderCommandTest> validator)
         {
+            this._validator = validator;
             this._orderRepository = orderRepository;
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command)
+        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommandTest command)
         {
             // TODO 可檢核Customer 存不存在、Currency是否正確等等
+
+            // FluentValidation 官方不能自動驗證了，要用FluentValidation.AspNetCore，但FluentValidation.AspNetCore不更新了
+            //var vs = await _validator.ValidateAsync(command); 
 
             var order = new Order(command.Amount, command.Currency, command.CustomerId, 
                 command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity}).ToList());
