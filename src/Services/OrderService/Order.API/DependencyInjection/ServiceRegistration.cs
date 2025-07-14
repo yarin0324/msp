@@ -23,6 +23,7 @@
                 // 掃描 Infrastructure 層的技術實現
                 .FromApplicationDependencies()
                 .AddClasses(classes => classes.InNamespaces(
+                    "OrderService.Infrastructure.Common",
                     "OrderService.Infrastructure.Repositories",
                     "OrderService.Infrastructure.Messaging"))
                 .AsImplementedInterfaces()

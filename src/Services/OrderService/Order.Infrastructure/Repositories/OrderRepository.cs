@@ -1,25 +1,24 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interfaces.Repositories;
+using OrderService.Infrastructure.Common;
 
 namespace OrderService.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly string? _connectionString;
+        private readonly IConnectionFactory _connectionFactory;
 
-        public OrderRepository(IConfiguration configuration)
+        public OrderRepository(IConnectionFactory connectionFactory)
         {
-            _connectionString = configuration.GetConnectionString("OrderDb");
+            this._connectionFactory = connectionFactory;
         }
 
         public async Task<long> AddAsync(Order order)
         {
-            await using var dbConnection = new SqlConnection(_connectionString);
-            await dbConnection.OpenAsync();
-            await using var transaction = await dbConnection.BeginTransactionAsync();
+            using var dbConnection = await _connectionFactory.CreateConnectionAsync("Order");
+            
+            using var transaction = dbConnection.BeginTransaction();
 
             try
             {
@@ -34,22 +33,22 @@ namespace OrderService.Infrastructure.Repositories
 
                 await dbConnection.ExecuteAsync(addOrderItemCommand, order.Items.Select(i => new { OrderId = orderId, i.ProductId, i.Quantity }), transaction);
 
-                await transaction.CommitAsync();
+                transaction.Commit();
 
                 return orderId;
             }
             catch
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 throw;
             }
         }
 
         public async Task<Order?> GetByIdAsync(long orderId)
         {
-            await using var dbConnection = new SqlConnection(_connectionString);
-            await dbConnection.OpenAsync();
-            await using var transaction = await dbConnection.BeginTransactionAsync();
+            using var dbConnection = await _connectionFactory.CreateConnectionAsync("Order");
+
+            using var transaction = dbConnection.BeginTransaction();
 
             const string getOrderCommand = @"SELECT TOP 1 * FROM Orders WHERE OrderId = @OrderId";
 
