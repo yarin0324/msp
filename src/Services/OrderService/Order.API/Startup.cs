@@ -55,7 +55,7 @@ public class Startup
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<CreateOrderCommandTestValidator>();
-        //services.AddValidatorsFromAssemblyContaining<CreateOrderRequestDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateOrderRequestDtoValidator>();
 
         //services.AddMassTransit(x =>
         //{

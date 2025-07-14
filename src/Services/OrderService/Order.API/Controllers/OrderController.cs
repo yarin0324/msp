@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Application.Commands;
 using OrderService.Application.Queries;
 using OrderService.Domain.Common;
 using OrderService.WebApi.DTOs;
@@ -14,22 +16,36 @@ namespace OrderService.WebApi.Controllers
     {
         private readonly OrderFacade _orderApiService;
         private readonly IMediator _mediator;
+        private readonly IValidator<CreateOrderRequestDto> _validator;
 
-        public OrderController(OrderFacade orderApiService, IMediator mediator)
+        public OrderController(OrderFacade orderApiService, IMediator mediator, IValidator<CreateOrderRequestDto> validator)
         {
             this._mediator = mediator;
             this._orderApiService = orderApiService;
+            this._validator = validator;
         }
         
         [HttpPost(Name = "CreateOrder")]
         public async Task<IActionResult> CreateOrder(CreateOrderRequestDto? creation)
         {
-            if(!ModelState.IsValid)
-                return BadRequest(Result<ActionResult>.Failure("Invalid model state."));
+            //if (!ModelState.IsValid)
+            //    return BadRequest(Result<ActionResult>.Failure("Invalid model state."));
 
-            //var result = await _mediator.Send(OrderMappers.ToCommand(creation));
+            // 手動驗證範例
+            //var validationResult = await _validator.ValidateAsync(creation);
 
-            var result = await _orderApiService.CreateOrderAsync(creation);
+            //if (validationResult.IsValid is false)
+            //{
+            //    var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage);
+            //    var resultMessage = string.Join(",", errorMessages);
+            //    return BadRequest(Result<ActionResult>.Failure(resultMessage));
+            //}
+
+            // 透過 Mediator
+            var result = await _mediator.Send(OrderMappers.ToCommand(creation));
+
+            // 透過 Use Case
+            //var result = await _orderApiService.CreateOrderAsync(creation);
 
             if (!result.IsSuccess)
             {
@@ -42,12 +58,14 @@ namespace OrderService.WebApi.Controllers
         [HttpGet(Name = "GetOrder")]
         public async Task<IActionResult> GetOrder(long id)
         {
-            //var result = await _orderApiService.GetOrderAsync(id);
-
+            // 透過 Mediator
             var result = await _mediator.Send(new GetOrderQuery
             {
                 OrderId = id
             });
+
+            // 透過 Use Case
+            //var result = await _orderApiService.GetOrderAsync(id);
 
             if (!result.IsSuccess)
             {
