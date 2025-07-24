@@ -18,15 +18,15 @@ namespace OrderService.Application.UseCases
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IValidator<CreateOrderCommandTest> _validator;
-        public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher, IValidator<CreateOrderCommandTest> validator)
+        private readonly IValidator<CreateOrderCommand> _validator;
+        public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher, IValidator<CreateOrderCommand> validator)
         {
             this._validator = validator;
             this._orderRepository = orderRepository;
             this._eventPublisher = eventPublisher;
         }
 
-        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommandTest command)
+        public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command)
         {
             // TODO 可檢核Customer 存不存在、Currency是否正確等等
 

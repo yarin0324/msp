@@ -47,3 +47,9 @@
 /src/Services/InventoryService/InventoryService.Domain/obj
 /src/Services/Common/bin/Debug/net8.0
 /src/Services/Common/obj
+/src/Services/InventoryService/InventoryService.Application/bin/Debug/net8.0
+/src/Services/InventoryService/InventoryService.Application/obj
+/src/Services/InventoryService/InventoryService.Infrastructure/bin/Debug/net8.0
+/src/Services/InventoryService/InventoryService.Infrastructure/obj
+/src/Services/InventoryService/InventoryService.WebApi/bin/Debug/net8.0
+/src/Services/InventoryService/InventoryService.WebApi/obj

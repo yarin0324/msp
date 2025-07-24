@@ -6,6 +6,6 @@ namespace OrderService.Application.Interfaces
 {
     public interface ICreateOrderUseCase
     {
-        Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommandTest command);
+        Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command);
     }
 }

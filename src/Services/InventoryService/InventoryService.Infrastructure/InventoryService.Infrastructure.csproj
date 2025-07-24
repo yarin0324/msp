@@ -13,8 +13,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\InventoryService\InventoryService.Domain\InventoryService.Domain.csproj" />
-    <ProjectReference Include="..\Order.UseCase\OrderService.Application.csproj" />
+    <ProjectReference Include="..\InventoryService.Application\InventoryService.Application.csproj" />
+    <ProjectReference Include="..\InventoryService.Domain\InventoryService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Messaging\Consumers\" />
+    <Folder Include="Messaging\Publishers\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

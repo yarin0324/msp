@@ -3,9 +3,9 @@ using OrderService.Application.Commands;
 
 namespace OrderService.Application.Validators
 {
-    public class CreateOrderCommandTestValidator : AbstractValidator<CreateOrderCommandTest>
+    public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
     {
-        public CreateOrderCommandTestValidator()
+        public CreateOrderCommandValidator()
         {
             RuleFor(command => command.CustomerId).NotEmpty().WithMessage("Customer ID is required.");
 

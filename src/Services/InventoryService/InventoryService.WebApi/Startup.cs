@@ -1,16 +1,14 @@
 ﻿using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using InventoryService.Application.Middleware.Exception;
+using InventoryService.Application.Queries;
+using InventoryService.Application.Validators;
+using InventoryService.WebApi.DependencyInjection;
 using MassTransit;
-using OrderService.Application.Handlers;
-using OrderService.Application.Validators;
-using OrderService.Infrastructure.Messaging.Publishers;
-using OrderService.WebApi.DependencyInjection;
-using OrderService.WebApi.Middleware.Exception;
-using OrderService.WebApi.Validators;
 using Serilog;
 
-namespace OrderService.WebApi;
+namespace InventoryService.WebApi;
 
 public class Startup
 {
@@ -38,9 +36,8 @@ public class Startup
         });
         
         ServiceRegistration.AddApplicationServices(services);
-
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetOrderQueryHandler).Assembly));
+        
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetInventoryQuery).Assembly));
         
         services.AddMassTransit(x =>
         {
@@ -51,8 +48,7 @@ public class Startup
         });
 
         services.AddFluentValidationAutoValidation();
-        services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
-        services.AddValidatorsFromAssemblyContaining<CreateOrderRequestDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<DeductInventoryCommandValidator>();
 
         //services.AddMassTransit(x =>
         //{
@@ -98,7 +94,7 @@ public class Startup
         //});
 
         // 註冊發布者
-        services.AddScoped<OrderCreatedPublisher>();
+        //services.AddScoped<OrderCreatedPublisher>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

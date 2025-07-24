@@ -1,4 +1,4 @@
-﻿namespace OrderService.Domain.Common
+﻿namespace InventoryService.Domain.Common
 {
     public class Result<T>
     {

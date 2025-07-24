@@ -49,13 +49,13 @@ namespace OrderService.WebApi.Mappers
             };
         }
 
-        public static CreateOrderCommandTest ToCommandTest(CreateOrderRequestDto order)
+        public static CreateOrderCommand ToCommandTest(CreateOrderRequestDto order)
         {
             //TODO : 改AutoMapper
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            return new CreateOrderCommandTest
+            return new CreateOrderCommand
             {
                 Amount = order.Amount!.Value,
                 Currency = order.Currency,

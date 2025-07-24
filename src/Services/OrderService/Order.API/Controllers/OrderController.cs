@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OrderService.Application.Commands;
 using OrderService.Application.Queries;
-using OrderService.Domain.Common;
 using OrderService.WebApi.DTOs;
 using OrderService.WebApi.Facades;
 using OrderService.WebApi.Mappers;
+using OrderService.WebApi.Middleware.Exception;
 
 namespace OrderService.WebApi.Controllers
 {
@@ -49,7 +48,15 @@ namespace OrderService.WebApi.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(new { errors = result.Message });
+                var errorResponse = new ErrorResponse
+                {
+                    IsSuccess = false,
+                    ErrorCode = result.ErrorCode ?? "Bad Request",
+                    ErrorMessage = result.Message,
+                    Details = result.Message
+                };
+
+                return BadRequest(errorResponse);
             }
 
             return Ok(result);
