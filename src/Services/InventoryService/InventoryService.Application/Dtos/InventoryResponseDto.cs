@@ -5,7 +5,7 @@
     /// </summary>
     public class InventoryResponseDto
     {
-        //public long OrderId { get; set; }
+        public string ProductId { get; set; }
         //public decimal Amount { get; set; }
         //public string Currency { get; set; }
         //public string CustomerId { get; set; }

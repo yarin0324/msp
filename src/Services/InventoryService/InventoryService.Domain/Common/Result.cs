@@ -23,6 +23,6 @@
         }
 
         public static Result<T> Success(T value, string message = null) => new Result<T>(value, message);
-        public static Result<T> Failure(string errorCode, string message) => new Result<T>(errorCode, message);
+        public static Result<T> Failure(string errorCode, string message = null) => new Result<T>(errorCode, message);
     }
 }

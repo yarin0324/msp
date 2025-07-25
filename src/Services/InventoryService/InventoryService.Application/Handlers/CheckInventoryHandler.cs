@@ -1,30 +1,30 @@
 ﻿using InventoryService.Application.Commands;
-using InventoryService.Application.Dtos;
 using InventoryService.Domain.Common;
-using InventoryService.Domain.Interfaces.Events;
 using InventoryService.Domain.Interfaces.Repositories;
 using MediatR;
+using System.Net;
 
 namespace InventoryService.Application.Handlers
 {
     /// <summary>
     /// 檢查庫存處理
     /// </summary>
-    public class CheckInventoryHandler : IRequestHandler<CreateInventoryCommand, Result<InventoryResponseDto>>
+    public class CheckInventoryHandler : IRequestHandler<CheckInventoryCommand, Result<bool>>
     {
         private readonly IInventoryRepository _inventoryRepository;
-        private readonly IEventPublisher _eventPublisher;
 
-        public CheckInventoryHandler(IInventoryRepository inventoryRepository, IEventPublisher eventPublisher)
+        public CheckInventoryHandler(IInventoryRepository inventoryRepository)
         {
             this._inventoryRepository = inventoryRepository;
-            this._eventPublisher = eventPublisher;
         }
 
-
-        public Task<Result<InventoryResponseDto>> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(CheckInventoryCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var inventory = await _inventoryRepository.GetByProductIdAsync(request.ProductId);
+
+            return inventory == null ? 
+                Result<bool>.Failure(nameof(HttpStatusCode.InternalServerError), $"Inventory for product {request.ProductId} not found.") : 
+                Result<bool>.Success(inventory.Quantity >= request.Quantity);
         }
     }
 }

@@ -48,24 +48,5 @@ namespace OrderService.WebApi.Mappers
                 }).ToList()
             };
         }
-
-        public static CreateOrderCommand ToCommandTest(CreateOrderRequestDto order)
-        {
-            //TODO : 改AutoMapper
-            if (order == null)
-                throw new ArgumentNullException(nameof(order));
-
-            return new CreateOrderCommand
-            {
-                Amount = order.Amount!.Value,
-                Currency = order.Currency,
-                CustomerId = order.CustomerId,
-                Items = order.Items.Select(i => new OrderItemDto
-                {
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity
-                }).ToList()
-            };
-        }
     }
 }

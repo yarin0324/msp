@@ -18,9 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Messaging\Consumers\" />
     <Folder Include="Messaging\Publishers\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

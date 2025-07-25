@@ -5,11 +5,10 @@ using MediatR;
 namespace InventoryService.Application.Commands
 {
     /// <summary>
-    /// 作為CQRS Command，表示創建訂單的意圖
+    /// 作為CQRS Command，表示檢查庫存的意圖
     /// </summary>
-    public class DeductInventoryCommand : IRequest<Result<bool>>
+    public class CheckInventoryCommand : IRequest<Result<bool>>
     {
-        public long OrderId { get; set; }
         public string ProductId { get; set; }
         public int Quantity { get; set; }
     }

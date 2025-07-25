@@ -11,6 +11,7 @@
         public string Currency { get; private set; }
         public string CustomerId { get; private set; }
         public DateTime CreateTime { get; private set; }
+        public DateTime UpdateTime { get; private set; }
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 
         public void SetOrderId(long orderId)

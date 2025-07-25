@@ -3,10 +3,8 @@
     /// <summary>
     /// 庫存扣減成功事件
     /// </summary>
-    public class InventoryDeductedEvent
+    public class OrderPendingEvent
     {
         public long OrderId { get; set; }
-        public string ProductId { get; set; }
-        public int Quantity { get; set; }
     }
 }

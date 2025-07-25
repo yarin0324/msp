@@ -3,7 +3,10 @@
     public class Inventory
     {
         public string ProductId { get; private set; }
-        public int Quantity { get; private set; }
+        public int Quantity { get; set; }
+
+        public DateTime CreateTime { get; private set; }
+        public DateTime UpdateTime { get; set; }
 
         public Inventory(string productId, int quantity)
         {

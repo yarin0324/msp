@@ -19,7 +19,7 @@ namespace OrderService.WebApi.Facades
 
         public async Task<Result<CreateOrderResponseDto>> CreateOrderAsync(CreateOrderRequestDto order)
         {
-            var result = await _createOrderUseCase.ExecuteAsync(OrderMappers.ToCommandTest(order));
+            var result = await _createOrderUseCase.ExecuteAsync(OrderMappers.ToCommand(order));
 
             return Result<CreateOrderResponseDto>.Success(OrderMappers.ToCreateOrderResponseDto(result.Value));
         }
