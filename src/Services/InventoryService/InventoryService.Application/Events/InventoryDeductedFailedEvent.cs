@@ -5,7 +5,7 @@
     /// </summary>
     public class InventoryDeductedFailedEvent
     {
-        public long OrderId { get; set; }
+        //public long OrderId { get; set; }
         public string Reason { get; set; }
     }
 }

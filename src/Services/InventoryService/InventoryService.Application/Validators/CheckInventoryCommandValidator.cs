@@ -3,9 +3,9 @@ using InventoryService.Application.Commands;
 
 namespace InventoryService.Application.Validators
 {
-    public class DeductInventoryCommandValidator : AbstractValidator<DeductInventoryCommand>
+    public class CheckInventoryCommandValidator : AbstractValidator<CheckInventoryCommand>
     {
-        public DeductInventoryCommandValidator()
+        public CheckInventoryCommandValidator()
         {
             RuleFor(command => command.ProductId).NotEmpty().WithMessage("Product ID is required.");
 

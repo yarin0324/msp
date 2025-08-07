@@ -84,6 +84,23 @@
         "ExceptionsAllowedBeforeBreaking": 3, //允許多少次異常
         "DurationOfBreak": 1500 //斷開持續時間(ms)
       }
+    },
+    //庫存服務
+    {
+      "UpstreamPathTemplate": "/inventory/{everything}", //上游路徑模板
+      "UpstreamHttpMethod": [ "POST", "GET" ], //上游可允許動詞
+      "DownstreamPathTemplate": "/{everything}", //下游路徑模板
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5271
+        }
+      ],
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3, //允許多少次異常
+        "DurationOfBreak": 1500 //斷開持續時間(ms)
+      }
     }
   ]
 }

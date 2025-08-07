@@ -34,7 +34,7 @@ namespace InventoryService.WebApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.AddConsul("Order/Config/Serilog", options =>
+                    config.AddConsul("Inventory/Config/Serilog", options =>
                     {
                         // Consul Server Address
                         options.ConsulConfigurationOptions = cfg =>

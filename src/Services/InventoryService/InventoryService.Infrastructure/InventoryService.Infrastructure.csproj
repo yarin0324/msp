@@ -17,8 +17,4 @@
     <ProjectReference Include="..\InventoryService.Domain\InventoryService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Messaging\Publishers\" />
-  </ItemGroup>
-
 </Project>

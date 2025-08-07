@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using MassTransit;
 using OrderService.Application.Handlers;
 using OrderService.Application.Validators;
+using OrderService.Infrastructure.Messaging.Consumers;
 using OrderService.Infrastructure.Messaging.Publishers;
 using OrderService.WebApi.DependencyInjection;
 using OrderService.WebApi.Middleware.Exception;
@@ -42,17 +43,27 @@ public class Startup
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetOrderQueryHandler).Assembly));
         
-        services.AddMassTransit(x =>
-        {
-            x.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
-            });
-        });
-
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateOrderRequestDtoValidator>();
+
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<InventoryDeductedConsumer>();
+            //x.AddConsumer<DataFetchedConsumer>();
+            //x.AddRequestClient<ForwardDataRequestEvent>();
+            //x.AddRequestClient<S2AInitRequestEvent>();
+            //x.AddRequestClient<S2ADataFetchedNotification>();
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
+                cfg.ReceiveEndpoint("order-queue", e =>
+                {
+                    e.ConfigureConsumers(context);
+                    //e.ConfigureConsumer<MonitoringConsumer>(context);
+                });
+            });
+        });
 
         //services.AddMassTransit(x =>
         //{

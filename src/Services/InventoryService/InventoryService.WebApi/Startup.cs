@@ -1,9 +1,14 @@
-﻿using Consul;
+﻿using Common.Contracts;
+using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using InventoryService.Application.Commands;
+using InventoryService.Application.Events;
+using InventoryService.Application.Handlers;
 using InventoryService.Application.Middleware.Exception;
 using InventoryService.Application.Queries;
 using InventoryService.Application.Validators;
+using InventoryService.Infrastructure.Messaging.Publishers;
 using InventoryService.WebApi.DependencyInjection;
 using MassTransit;
 using Serilog;
@@ -37,13 +42,22 @@ public class Startup
         
         ServiceRegistration.AddApplicationServices(services);
         
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetInventoryQuery).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CheckInventoryHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DeductInventoryHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetInventoryHandler).Assembly));
         
         services.AddMassTransit(x =>
-        {
+        {   
+            x.AddRequestClient<IInventoryDeductedEvent>();
             x.UsingRabbitMq((context, cfg) =>
             {
+                //cfg.Host("amqp://guest:guest@localhost:5672/");
                 cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
+                cfg.ReceiveEndpoint("inventory-queue", e =>
+                {
+                    e.ConfigureConsumers(context);
+                    //e.ConfigureConsumer<MonitoringConsumer>(context);
+                });
             });
         });
 
@@ -94,7 +108,7 @@ public class Startup
         //});
 
         // 註冊發布者
-        //services.AddScoped<OrderCreatedPublisher>();
+        services.AddScoped<InventoryCreatedPublisher>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -130,7 +144,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGet("/health", () => Results.Ok("Healthy")).AllowAnonymous();
+            //endpoints.MapGet("/health", () => Results.Ok("Healthy")).AllowAnonymous();
         });
 
         app.UseExceptionMiddleware();
@@ -140,13 +154,13 @@ public class Startup
 
         var registration = new AgentServiceRegistration
         {
-            ID = $"order-service-{Guid.NewGuid()}",
-            Name = "Order Service",
+            ID = $"inventory-service-{Guid.NewGuid()}",
+            Name = "Inventory Service",
             Address = "host.docker.internal", // 配置為 Docker 環境
-            Port = 5125,
+            Port = 5271,
             Check = new AgentServiceCheck
             {
-                HTTP = "http://host.docker.internal:5125/health",
+                HTTP = "http://host.docker.internal:5271/health",
                 Interval = TimeSpan.FromSeconds(10),
                 Timeout = TimeSpan.FromSeconds(5), // 增加超時
                 DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1) // 失敗後 1 分鐘移除服務

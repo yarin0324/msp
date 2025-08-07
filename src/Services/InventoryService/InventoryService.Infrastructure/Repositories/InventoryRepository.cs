@@ -1,4 +1,5 @@
-﻿using InventoryService.Domain.Entities;
+﻿using Dapper;
+using InventoryService.Domain.Entities;
 using InventoryService.Domain.Interfaces.Repositories;
 using InventoryService.Infrastructure.Common;
 
@@ -32,7 +33,15 @@ namespace InventoryService.Infrastructure.Repositories
 
         public async Task<Inventory?> GetByProductIdAsync(string productId)
         {
-            throw new NotImplementedException();
+            using var dbConnection = await _connectionFactory.CreateConnectionAsync("Inventory");
+
+            using var transaction = dbConnection.BeginTransaction();
+
+            const string command = @"SELECT TOP 1 * FROM Inventory WHERE ProductId = @ProductId";
+
+            var inventory = await dbConnection.QuerySingleOrDefaultAsync<Inventory>(command, new { ProductId = productId }, transaction);
+
+            return inventory;
         }
     }
 }

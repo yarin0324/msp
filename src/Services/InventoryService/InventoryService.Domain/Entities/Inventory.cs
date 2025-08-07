@@ -8,6 +8,8 @@
         public DateTime CreateTime { get; private set; }
         public DateTime UpdateTime { get; set; }
 
+        public Inventory() { }
+
         public Inventory(string productId, int quantity)
         {
             if (string.IsNullOrEmpty(productId)) throw new ArgumentException("ProductId cannot be empty.");

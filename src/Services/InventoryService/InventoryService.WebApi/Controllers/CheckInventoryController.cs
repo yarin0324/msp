@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using InventoryService.Application.Commands;
 using InventoryService.Application.Middleware.Exception;
 using InventoryService.WebApi.Dtos;
 using InventoryService.WebApi.Mappers;
@@ -10,16 +9,16 @@ namespace InventoryService.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class InventoryController : ControllerBase
+    public class CheckInventoryController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IValidator<CheckInventoryRequestDto> _validator;
 
-        public InventoryController(IMediator mediator)
+        public CheckInventoryController(IMediator mediator)
         {
             this._mediator = mediator;
         }
-        
+
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> CheckInventory(CheckInventoryRequestDto? request)
         {
@@ -53,28 +52,6 @@ namespace InventoryService.WebApi.Controllers
                 };
 
                 return BadRequest(errorResponse);
-            }
-
-            return Ok(result);
-        }
-
-        [HttpGet(Name = "Deduct")]
-        public async Task<IActionResult> DeductInventory(DeductInventoryRequestDto request)
-        {
-            // 透過 Mediator
-            var result = await _mediator.Send(new DeductInventoryCommand
-            {
-                OrderId = request.OrderId,
-                ProductId = request.ProductId,
-                Quantity = request.Quantity
-            });
-
-            // 透過 Use Case
-            //var result = await _orderApiService.GetOrderAsync(id);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(new { errors = result.Message });
             }
 
             return Ok(result);

@@ -27,12 +27,12 @@
                     "InventoryService.Infrastructure.Repositories",
                     "InventoryService.Infrastructure.Messaging"))
                 .AsImplementedInterfaces()
-                .WithScopedLifetime()
-                // 掃描 WebApi 層的服務（Facade）
-                .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("InventoryService.WebApi.Facades"))
-                .AsSelf()
                 .WithScopedLifetime());
+                // 掃描 WebApi 層的服務（Facade）
+                //.FromApplicationDependencies()
+                //.AddClasses(classes => classes.InNamespaces("InventoryService.WebApi.Facades"))
+                //.AsSelf()
+                //.WithScopedLifetime());
 
             return services;
         }

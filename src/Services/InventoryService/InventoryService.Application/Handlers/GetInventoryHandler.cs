@@ -6,11 +6,11 @@ using MediatR;
 
 namespace InventoryService.Application.Handlers
 {
-    public class GetOrderQueryHandler : IRequestHandler<GetInventoryQuery, Result<InventoryResponseDto>>
+    public class GetInventoryHandler : IRequestHandler<GetInventoryQuery, Result<InventoryResponseDto>>
     {
         private readonly IInventoryRepository _inventoryRepository;
 
-        public GetOrderQueryHandler(IInventoryRepository inventoryRepository)
+        public GetInventoryHandler(IInventoryRepository inventoryRepository)
         {
             this._inventoryRepository = inventoryRepository;
         }

@@ -1,5 +1,4 @@
-﻿using InventoryService.Application.Dtos;
-using InventoryService.Domain.Common;
+﻿using InventoryService.Domain.Common;
 using MediatR;
 
 namespace InventoryService.Application.Commands

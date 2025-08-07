@@ -35,7 +35,7 @@ namespace InventoryService.Application.Handlers
             {
                 await _eventPublisher.PublishAsync(new InventoryDeductedFailedEvent
                 {
-                    OrderId = request.OrderId,
+                    //OrderId = request.OrderId,
                     Reason = $"Insufficient inventory for product {request.ProductId}. Available: {inventory.Quantity}, Requested: {request.Quantity}."
                 });
 
@@ -45,11 +45,11 @@ namespace InventoryService.Application.Handlers
             inventory.Quantity -= request.Quantity;
             inventory.UpdateTime = DateTime.Now;
 
-            await _inventoryRepository.UpdateAsync(inventory);
+            //await _inventoryRepository.UpdateAsync(inventory);
 
             await _eventPublisher.PublishAsync(new InventoryDeductedEvent
             {
-                OrderId = request.OrderId,
+                //OrderId = request.OrderId,
                 ProductId = request.ProductId,
                 Quantity = request.Quantity,
             });
