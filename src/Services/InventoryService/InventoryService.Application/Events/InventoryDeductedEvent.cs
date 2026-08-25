@@ -1,4 +1,4 @@
-﻿using Common.Contracts;
+using Common.Contracts;
 
 namespace InventoryService.Application.Events
 {
@@ -7,8 +7,8 @@ namespace InventoryService.Application.Events
     /// </summary>
     public class InventoryDeductedEvent : IInventoryDeductedEvent
     {
-        //public long OrderId { get; set; }
-        public string ProductId { get; set; }
+        public long OrderId { get; set; }
+        public string ProductId { get; set; } = string.Empty;
         public int Quantity { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Consul;
+using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MassTransit;
@@ -50,17 +50,13 @@ public class Startup
         services.AddMassTransit(x =>
         {
             x.AddConsumer<InventoryDeductedConsumer>();
-            //x.AddConsumer<DataFetchedConsumer>();
-            //x.AddRequestClient<ForwardDataRequestEvent>();
-            //x.AddRequestClient<S2AInitRequestEvent>();
-            //x.AddRequestClient<S2ADataFetchedNotification>();
+            x.AddConsumer<InventoryDeductedFailedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
                 cfg.ReceiveEndpoint("order-queue", e =>
                 {
                     e.ConfigureConsumers(context);
-                    //e.ConfigureConsumer<MonitoringConsumer>(context);
                 });
             });
         });
@@ -108,8 +104,9 @@ public class Startup
         //    });
         //});
 
-        // 註冊發布者
+        // 註冊發布者與 Outbox 背景派送 Worker
         services.AddScoped<OrderCreatedPublisher>();
+        services.AddHostedService<OrderService.Infrastructure.BackgroundServices.OutboxPublisherWorker>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -140,6 +137,8 @@ public class Startup
         //    };
         //});
 
+        app.UseExceptionMiddleware();
+
         app.UseRouting();
         
         app.UseEndpoints(endpoints =>
@@ -147,8 +146,6 @@ public class Startup
             endpoints.MapControllers();
             endpoints.MapGet("/health", () => Results.Ok("Healthy")).AllowAnonymous();
         });
-
-        app.UseExceptionMiddleware();
 
         var lifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();
         var consulClient = app.ApplicationServices.GetRequiredService<IConsulClient>();

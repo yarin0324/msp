@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using OrderService.Application.Dtos;
 using OrderService.Application.Queries;
 using OrderService.Domain.Common;
@@ -31,6 +31,7 @@ namespace OrderService.Application.Handlers
                     Amount = order.Amount,
                     CustomerId = order.CustomerId,
                     Currency = order.Currency,
+                    Status = order.Status.ToString(),
                     CreateTime = order.CreateTime,
                     Items = order.Items.Select(i => new OrderItemDto()
                     {

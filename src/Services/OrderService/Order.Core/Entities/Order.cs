@@ -1,22 +1,37 @@
-﻿namespace OrderService.Domain.Entities
+namespace OrderService.Domain.Entities
 {
     /// <summary>
     /// 訂單
     /// 實體層，僅包含業務邏輯與資料結構，保持純粹性
     /// </summary>
+    public enum OrderStatus
+    {
+        Pending = 0,
+        StockReserved = 1,
+        Cancelled = 2,
+        Completed = 3
+    }
+
     public class Order
     {
         public long OrderId { get; private set; }
         public decimal Amount { get; private set; }
         public string Currency { get; private set; }
         public string CustomerId { get; private set; }
+        public OrderStatus Status { get; private set; } = OrderStatus.Pending;
         public DateTime CreateTime { get; private set; }
-        public DateTime UpdateTime { get; private set; }
+        public DateTime UpdateTime { get; set; }
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 
         public void SetOrderId(long orderId)
         {
             OrderId = orderId;
+        }
+
+        public void SetStatus(OrderStatus status)
+        {
+            Status = status;
+            UpdateTime = DateTime.UtcNow;
         }
 
         public Order() { }
@@ -36,7 +51,9 @@
             this.Amount = amount;
             this.Currency = currency;
             this.CustomerId = customerId;
-            this.CreateTime = DateTime.Now;
+            this.Status = OrderStatus.Pending;
+            this.CreateTime = DateTime.UtcNow;
+            this.UpdateTime = DateTime.UtcNow;
             this.Items = items ?? new List<OrderItem>();
         }
     }

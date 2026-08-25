@@ -1,9 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.70" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\InventoryService\InventoryService.Application\InventoryService.Application.csproj" />
+    <ProjectReference Include="..\..\InventoryService\InventoryService.Domain\InventoryService.Domain.csproj" />
+    <ProjectReference Include="..\Order.Core\OrderService.Domain.csproj" />
+    <ProjectReference Include="..\Order.UseCase\OrderService.Application.csproj" />
+    <ProjectReference Include="..\Order.Infrastructure\OrderService.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using Common.Contracts;
+using Common.Contracts;
 using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -48,15 +48,13 @@ public class Startup
         
         services.AddMassTransit(x =>
         {   
-            x.AddRequestClient<IInventoryDeductedEvent>();
+            x.AddConsumer<InventoryService.Infrastructure.Messaging.Consumers.OrderPendingConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
-                //cfg.Host("amqp://guest:guest@localhost:5672/");
                 cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
-                cfg.ReceiveEndpoint("inventory-queue", e =>
+                cfg.ReceiveEndpoint("inventory-order-created-queue", e =>
                 {
                     e.ConfigureConsumers(context);
-                    //e.ConfigureConsumer<MonitoringConsumer>(context);
                 });
             });
         });
@@ -139,15 +137,15 @@ public class Startup
         //    };
         //});
 
+        app.UseExceptionMiddleware();
+
         app.UseRouting();
         
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            //endpoints.MapGet("/health", () => Results.Ok("Healthy")).AllowAnonymous();
+            endpoints.MapGet("/health", () => Results.Ok("Healthy")).AllowAnonymous();
         });
-
-        app.UseExceptionMiddleware();
 
         var lifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();
         var consulClient = app.ApplicationServices.GetRequiredService<IConsulClient>();

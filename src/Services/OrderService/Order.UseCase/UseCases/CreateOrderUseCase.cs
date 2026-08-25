@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using Common.Contracts;
+using FluentValidation;
 using OrderService.Application.Commands;
 using OrderService.Application.Dtos;
 using OrderService.Application.Events;
@@ -7,18 +8,18 @@ using OrderService.Domain.Common;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interfaces.Events;
 using OrderService.Domain.Interfaces.Repositories;
-using OrderCreatedEvent = OrderService.Application.Events.OrderCreatedEvent;
 
 namespace OrderService.Application.UseCases
 {
     /// <summary>
-    /// 傳統UseCase作法
+    /// 傳統 UseCase 作法
     /// </summary>
     public class CreateOrderUseCase : ICreateOrderUseCase
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IEventPublisher _eventPublisher;
         private readonly IValidator<CreateOrderCommand> _validator;
+
         public CreateOrderUseCase(IOrderRepository orderRepository, IEventPublisher eventPublisher, IValidator<CreateOrderCommand> validator)
         {
             this._validator = validator;
@@ -28,11 +29,6 @@ namespace OrderService.Application.UseCases
 
         public async Task<Result<OrderResponseDto>> ExecuteAsync(CreateOrderCommand command)
         {
-            // TODO 可檢核Customer 存不存在、Currency是否正確等等
-
-            // FluentValidation 官方不能自動驗證了，要用FluentValidation.AspNetCore，但FluentValidation.AspNetCore不更新了
-            //var vs = await _validator.ValidateAsync(command); 
-
             var order = new Order(command.Amount, command.Currency, command.CustomerId, 
                 command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity}).ToList());
 
@@ -47,14 +43,14 @@ namespace OrderService.Application.UseCases
             }
 
             // 發佈創建訂單事件
-            await _eventPublisher.PublishAsync(new OrderCreatedEvent
+            await _eventPublisher.PublishAsync<IOrderCreatedEvent>(new OrderCreatedEvent
             {
-                Id = order.OrderId,
+                OrderId = order.OrderId,
                 Amount = order.Amount,
                 Currency = order.Currency,
                 CustomerId = order.CustomerId,
                 CreateTime = order.CreateTime,
-                Items = order.Items.Select(i => new OrderItemEvent
+                Items = order.Items.Select(i => (IOrderItemContract)new OrderItemEvent
                 {
                     ProductId = i.ProductId,
                     Quantity = i.Quantity
