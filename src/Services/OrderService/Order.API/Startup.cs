@@ -1,3 +1,7 @@
+using Common.Idempotency;
+using Common.Messaging;
+using Common.Observability;
+using Common.Security;
 using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -24,6 +28,16 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // 註冊 OpenTelemetry 全鏈路可觀測性
+        services.AddCustomObservability(Configuration, "OrderService");
+
+        // 註冊介面冪等性服務 (Redis 分散式鎖 + 結果快取)
+        services.AddCustomIdempotency(Configuration);
+
+        // 註冊 HttpContext 存取器與目前使用者上下文 (自動讀取 Gateway 轉發之 X-User-* 標頭)
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+
         services.AddSingleton<IConsulClient, ConsulClient>(
             _ => new ConsulClient(
                 cfg => cfg.Address = new Uri("http://localhost:8500")));
@@ -51,12 +65,16 @@ public class Startup
         {
             x.AddConsumer<InventoryDeductedConsumer>();
             x.AddConsumer<InventoryDeductedFailedConsumer>();
+            x.AddConsumer<PaymentProcessedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
+                var rabbitMqConn = Configuration.GetConnectionString("RabbitMQ") ?? "amqp://guest:guest@localhost:5672/";
+                // 配置指數退避重試 (1s, 4s, 10s) 與 In-Memory Outbox
+                cfg.ConfigureStandardRabbitMqBus(context, rabbitMqConn);
                 cfg.ReceiveEndpoint("order-queue", e =>
                 {
-                    e.ConfigureConsumers(context);
+                    // 限流與 DLQ (Dead Letter Queue: order-queue_error)
+                    e.ConfigureStandardEndpoint(context);
                 });
             });
         });

@@ -1,4 +1,7 @@
 using Common.Contracts;
+using Common.Messaging;
+using Common.Observability;
+using Common.Security;
 using Consul;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -26,6 +29,13 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // 註冊 OpenTelemetry 全鏈路可觀測性
+        services.AddCustomObservability(Configuration, "InventoryService");
+
+        // 註冊 HttpContext 存取器與目前使用者上下文
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+
         services.AddSingleton<IConsulClient, ConsulClient>(
             _ => new ConsulClient(
                 cfg => cfg.Address = new Uri("http://localhost:8500")));
@@ -51,10 +61,11 @@ public class Startup
             x.AddConsumer<InventoryService.Infrastructure.Messaging.Consumers.OrderPendingConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(Configuration.GetConnectionString("RabbitMQ"));
+                var rabbitMqConn = Configuration.GetConnectionString("RabbitMQ") ?? "amqp://guest:guest@localhost:5672/";
+                cfg.ConfigureStandardRabbitMqBus(context, rabbitMqConn);
                 cfg.ReceiveEndpoint("inventory-order-created-queue", e =>
                 {
-                    e.ConfigureConsumers(context);
+                    e.ConfigureStandardEndpoint(context);
                 });
             });
         });

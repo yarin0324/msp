@@ -1,66 +1,65 @@
-using Serilog;
-using Winton.Extensions.Configuration.Consul;
+using Basket.API.Consumers;
+using Basket.Core.Interfaces;
+using Basket.Infrastructure.Repositories;
+using Common.Messaging;
+using Common.Observability;
+using Common.Security;
+using Consul;
+using MassTransit;
+using StackExchange.Redis;
 
-namespace Basket.API
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. è¨»å†Š OpenTelemetry å…¨éˆè·¯å¯è§€æ¸¬æ€§
+builder.Services.AddCustomObservability(builder.Configuration, "BasketService");
+
+// 2. è¨»å†Š Redis é€£ç·šèˆ‡å€‰å„²
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnectionString));
+builder.Services.AddScoped<IBasketRepository, RedisBasketRepository>();
+
+// 3. è¨»å†Šä½¿ç”¨è€…ä¸Šä¸‹æ–‡ (è®€å– Gateway X-User-* æ¨™é ­)
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+
+// 4. è¨»å†Š Consul å®¢æˆ¶ç«¯
+builder.Services.AddSingleton<IConsulClient, ConsulClient>(_ => new ConsulClient(cfg =>
 {
-    internal abstract class Program
+    var consulAddress = builder.Configuration["Consul:Address"] ?? "http://localhost:8500";
+    cfg.Address = new Uri(consulAddress);
+}));
+
+// 5. è¨»å†Š MassTransit (æ¶ˆè²» OrderCreatedEvent è‡ªå‹•æ¸…ç©ºè³¼ç‰©è»Š)
+var rabbitMqHost = builder.Configuration.GetConnectionString("RabbitMQ") ?? "amqp://guest:guest@localhost:5672/";
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>();
+    x.UsingRabbitMq((context, cfg) =>
     {
-        public static int Main(string[] args)
+        cfg.ConfigureStandardRabbitMqBus(context, rabbitMqHost);
+        cfg.ReceiveEndpoint("basket-order-created-queue", e =>
         {
-            var builder = WebApplication.CreateBuilder(args);
-            
-            //¸ê¦w: Á×§K¾î´T§ì¨ú¡A²¾°£ Server Header ¸ê°T
-            builder.WebHost.UseKestrel(option => option.AddServerHeader = false);
-            
-            try
-            {
-                CreateHostBuilder(args).Build().Run();
+            e.ConfigureStandardEndpoint(context);
+        });
+    });
+});
 
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "µo¥Í¥¼¹w´Á¿ù»~...");
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
-        }
+var app = builder.Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    config.AddConsul("Basket/Config/Serilog", options =>
-                    {
-                        // Consul Server Address
-                        options.ConsulConfigurationOptions = cfg =>
-                        {
-                            cfg.Address = new Uri("http://localhost:8500");
-                        };
-                        options.Optional = true; // ­Y Consul ¤£¥i¥Î¡AÀ³¥Îµ{¦¡¤´¥i±Ò°Ê
-                        options.ReloadOnChange = true; // ·í Consul °t¸m§ïÅÜ®É¦Û°Ê­«·s¸ü¤J
-                        options.PollWaitTime = TimeSpan.FromSeconds(5); // ½ü¸ß´Á¶¡¡AÁ×§K¹L¦h½Ğ¨D
-                        options.OnLoadException = exceptionContext => // ³B²z¸ü¤J¿ù»~
-                        {
-                            Console.WriteLine($"Failed to load Consul config: {exceptionContext.Exception.Message}");
-                            exceptionContext.Ignore = true; // ©¿²¤¿ù»~¡AÄ~Äò°õ¦æ
-                        };
-                    });
-
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                })
-                .UseSerilog((hostingContext, services, loggerConfiguration) =>
-                {
-                    // ±q IConfiguration Åª¨ú Serilog °t¸m¨Ãªì©l¤Æ Log.Logger
-                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
-                });
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseRouting();
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy", service = "BasketService" })).AllowAnonymous();
+
+app.Run();

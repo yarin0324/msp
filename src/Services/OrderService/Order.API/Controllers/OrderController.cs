@@ -1,3 +1,4 @@
+using Common.Idempotency;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace OrderService.WebApi.Controllers
         }
         
         [HttpPost(Name = "CreateOrder")]
+        [Idempotent(Required = false, ExpiryHours = 24)]
         public async Task<IActionResult> CreateOrder(CreateOrderRequestDto? creation)
         {
             //if (!ModelState.IsValid)
