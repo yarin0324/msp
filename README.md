@@ -210,5 +210,16 @@ Content-Type: application/json
 
 ---
 
+## 自動化整合測試（Testcontainers）
+
+本專案於 `OrderService.Tests` 整合了 **Testcontainers** 測試套件。執行測試時會自動在 Docker 中並行拉起真實之 `SQL Server 2022`、`RabbitMQ 3` 與 `Redis 7` 臨時容器，執行包含資料庫列鎖防超賣、Saga 分散式交易閉環、介面冪等性防線與 Redis 購物車自動清除之端到端整合測試：
+
+```bash
+# 執行全部單元與 Testcontainers 整合測試
+dotnet test src/Services/OrderService/Order.Tests/OrderService.Tests.csproj
+```
+
+---
+
 ## 授權條款
 本專案基於 MIT 授權條款開源發布。

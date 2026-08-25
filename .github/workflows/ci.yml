@@ -1,0 +1,30 @@
+name: CI Build & Integration Tests
+
+on:
+  push:
+    branches: [ "main", "feat" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Build & Testcontainers Integration Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 簽出專案原始碼 (Checkout Code)
+      uses: actions/checkout@v4
+
+    - name: 安裝 .NET 8 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: 還原相依套件 (Restore Dependencies)
+      run: dotnet restore src/MSP.sln
+
+    - name: 建置解決方案 (Build Solution)
+      run: dotnet build src/MSP.sln --no-restore --configuration Release
+
+    - name: 執行 Testcontainers 端到端整合測試 (Run Integration Tests)
+      run: dotnet test src/Services/OrderService/Order.Tests/OrderService.Tests.csproj --no-build --configuration Release --verbosity normal
