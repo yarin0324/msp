@@ -1,50 +1,23 @@
-using Microsoft.AspNetCore.Hosting.StaticWebAssets;
-
 namespace WebApiGateway
 {
-    internal abstract class Program
+    public class Program
     {
-        public static int Main(string[] args)
+        public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            //資安: 避免橫幅抓取，移除 Server Header 資訊
-            builder.WebHost.UseKestrel(option => option.AddServerHeader = false);
-            
-            try
-            {
-                Console.WriteLine("網站開始啟動...");
-
-                CreateHostBuilder(args).Build().Run();
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                //Log.Fatal(ex, "發生未預期錯誤...");
-
-                return 1;
-            }
-            finally
-            {
-                //Log.CloseAndFlush();
-            }
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                          .AddEnvironmentVariables();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-
-                    webBuilder.ConfigureAppConfiguration((ctx, cb) =>
-                    {
-                        if (!ctx.HostingEnvironment.IsDevelopment())
-                        {
-                            StaticWebAssetsLoader.UseStaticWebAssets(ctx.HostingEnvironment, ctx.Configuration);
-                        }
-                    });
                 });
     }
 }

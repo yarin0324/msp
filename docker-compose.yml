@@ -67,8 +67,19 @@ services:
     ports:
       - "8500:8500"
 
+  # 分散式鏈路追蹤後台 (Jaeger Tracing with OTLP)
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: msp-jaeger
+    ports:
+      - "16686:16686" # Web UI
+      - "4317:4317"   # OTLP gRPC 收集埠
+      - "4318:4318"   # OTLP HTTP 收集埠
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
   # ----------------------------------------------------
-  # API 網關 (API Gateway)
+  # API 網關 (API Gateway - YARP)
   # ----------------------------------------------------
   webapigateway:
     build:
@@ -77,13 +88,25 @@ services:
     container_name: msp-webapigateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - ReverseProxy__Clusters__order-cluster__Destinations__order-service-local__Address=http://order-service:5125
+      - ReverseProxy__Clusters__inventory-cluster__Destinations__inventory-service-local__Address=http://inventory-service:5271
+      - ReverseProxy__Clusters__product-cluster__Destinations__product-service-local__Address=http://product-service:5272
+      - ReverseProxy__Clusters__basket-cluster__Destinations__basket-service-local__Address=http://basket-service:5079
+      - ReverseProxy__Clusters__identity-cluster__Destinations__identity-service-local__Address=http://identity-service:5184
+      - ReverseProxy__Clusters__payment-cluster__Destinations__payment-service-local__Address=http://payment-service:5198
+      - Consul__Address=http://consul:8500
     ports:
       - "5000:5000"
     depends_on:
       - consul
+      - jaeger
       - order-service
       - inventory-service
       - product-service
+      - basket-service
+      - identity-service
+      - payment-service
 
   # ----------------------------------------------------
   # 微服務 (Microservices)
@@ -95,8 +118,10 @@ services:
     container_name: msp-order-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - ConnectionStrings__OrderDb=Server=sqlserver,1433;Database=OrderDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672/
+      - ConnectionStrings__Redis=redis:6379
     ports:
       - "5125:5125"
     depends_on:
@@ -104,7 +129,11 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      redis:
+        condition: service_started
       consul:
+        condition: service_started
+      jaeger:
         condition: service_started
 
   inventory-service:
@@ -114,6 +143,7 @@ services:
     container_name: msp-inventory-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - ConnectionStrings__InventoryDb=Server=sqlserver,1433;Database=InventoryDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672/
     ports:
@@ -125,6 +155,8 @@ services:
         condition: service_healthy
       consul:
         condition: service_started
+      jaeger:
+        condition: service_started
 
   product-service:
     build:
@@ -133,8 +165,11 @@ services:
     container_name: msp-product-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     ports:
       - "5272:5272"
+    depends_on:
+      - jaeger
 
   basket-service:
     build:
@@ -143,11 +178,13 @@ services:
     container_name: msp-basket-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - ConnectionStrings__Redis=redis:6379
     ports:
       - "5079:5079"
     depends_on:
       - redis
+      - jaeger
 
   identity-service:
     build:
@@ -156,8 +193,11 @@ services:
     container_name: msp-identity-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     ports:
       - "5184:5184"
+    depends_on:
+      - jaeger
 
   payment-service:
     build:
@@ -166,8 +206,15 @@ services:
     container_name: msp-payment-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - ConnectionStrings__Redis=redis:6379
+      - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672/
     ports:
       - "5198:5198"
+    depends_on:
+      - redis
+      - jaeger
+      - rabbitmq
 
 # ----------------------------------------------------
 # 共享卷 (Volumes)
