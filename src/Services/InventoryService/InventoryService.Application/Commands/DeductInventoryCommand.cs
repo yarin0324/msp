@@ -1,4 +1,4 @@
-﻿using InventoryService.Application.Dtos;
+using InventoryService.Application.Dtos;
 using InventoryService.Domain.Common;
 using MediatR;
 
@@ -9,7 +9,7 @@ namespace InventoryService.Application.Commands
     /// </summary>
     public class DeductInventoryCommand : IRequest<Result<bool>>
     {
-        //public long OrderId { get; set; }
+        public long OrderId { get; set; }
         public string ProductId { get; set; }
         public int Quantity { get; set; }
     }

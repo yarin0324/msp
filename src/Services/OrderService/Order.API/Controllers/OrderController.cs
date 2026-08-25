@@ -1,9 +1,8 @@
-﻿using FluentValidation;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.Application.Queries;
 using OrderService.WebApi.DTOs;
-using OrderService.WebApi.Facades;
 using OrderService.WebApi.Mappers;
 using OrderService.WebApi.Middleware.Exception;
 
@@ -13,15 +12,11 @@ namespace OrderService.WebApi.Controllers
     [Route("[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly OrderFacade _orderApiService;
         private readonly IMediator _mediator;
-        private readonly IValidator<CreateOrderRequestDto> _validator;
 
-        public OrderController(OrderFacade orderApiService, IMediator mediator, IValidator<CreateOrderRequestDto> validator)
+        public OrderController(IMediator mediator)
         {
-            this._mediator = mediator;
-            this._orderApiService = orderApiService;
-            this._validator = validator;
+            _mediator = mediator;
         }
         
         [HttpPost(Name = "CreateOrder")]

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\InventoryService\InventoryService.Application\InventoryService.Application.csproj" />
-    <ProjectReference Include="..\..\InventoryService\InventoryService.Domain\InventoryService.Domain.csproj" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\Order.Core\OrderService.Domain.csproj" />
     <ProjectReference Include="..\Order.UseCase\OrderService.Application.csproj" />
   </ItemGroup>
 

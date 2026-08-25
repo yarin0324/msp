@@ -1,4 +1,6 @@
-﻿using MediatR;
+using System.Text.Json;
+using Common.Contracts;
+using MediatR;
 using OrderService.Application.Commands;
 using OrderService.Application.Dtos;
 using OrderService.Application.Events;
@@ -10,53 +12,55 @@ using OrderService.Domain.Interfaces.Repositories;
 namespace OrderService.Application.Handlers
 {
     /// <summary>
-    /// 透過Mediator 實作 CQRS 的作法
-    /// Mediator 類似 Facade，Web Api端可省去Facade，但專案規模大時，複雜度會上升
+    /// 透過 Mediator 實作 CQRS + Transactional Outbox Pattern
     /// </summary>
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponseDto>>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IEventPublisher _eventPublisher;
 
-        public CreateOrderCommandHandler(IOrderRepository orderRepository, IEventPublisher eventPublisher)
+        public CreateOrderCommandHandler(IOrderRepository orderRepository)
         {
-            this._orderRepository = orderRepository;
-            this._eventPublisher = eventPublisher;
+            _orderRepository = orderRepository;
         }
 
-        public async Task <Result<OrderResponseDto>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
+        public async Task<Result<OrderResponseDto>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
         {
             var order = new Order(command.Amount, command.Currency, command.CustomerId,
                 command.Items.Select(item => new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity }).ToList());
 
-            // 新增訂單資料
-            var orderId = await _orderRepository.AddAsync(order);
-
-            order.SetOrderId(orderId);
-
-            foreach (var item in order.Items)
+            // 準備事件實體
+            var orderCreatedEvent = new OrderCreatedEvent
             {
-                item.SetOrderId(orderId);
-            }
-
-            // 發佈創建訂單事件
-            await _eventPublisher.PublishAsync(new OrderCreatedEvent
-            {
-                Id = order.OrderId,
+                OrderId = order.OrderId,
                 Amount = order.Amount,
                 Currency = order.Currency,
                 CustomerId = order.CustomerId,
                 CreateTime = order.CreateTime,
-                Items = order.Items.Select(i => new OrderItemEvent
+                Items = order.Items.Select(i => (IOrderItemContract)new OrderItemEvent
                 {
                     ProductId = i.ProductId,
                     Quantity = i.Quantity
                 }).ToList()
-            });
+            };
+
+            // 序列化為 Outbox 訊息
+            var outboxMessage = new OutboxMessage(
+                typeof(OrderCreatedEvent).AssemblyQualifiedName ?? nameof(OrderCreatedEvent),
+                JsonSerializer.Serialize(orderCreatedEvent)
+            );
+
+            // 在同一個 DB Transaction 內寫入訂單與 Outbox 訊息 (保證雙寫一致性)
+            var orderId = await _orderRepository.AddAsync(order, outboxMessage);
+            order.SetOrderId(orderId);
 
             return Result<OrderResponseDto>.Success(new OrderResponseDto
             {
-                OrderId = order.OrderId
+                OrderId = order.OrderId,
+                Amount = order.Amount,
+                Currency = order.Currency,
+                CustomerId = order.CustomerId,
+                Status = order.Status.ToString(),
+                CreateTime = order.CreateTime
             });
         }
     }

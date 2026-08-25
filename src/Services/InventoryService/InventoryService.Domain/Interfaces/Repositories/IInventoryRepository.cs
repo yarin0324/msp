@@ -1,4 +1,4 @@
-﻿using InventoryService.Domain.Entities;
+using InventoryService.Domain.Entities;
 
 namespace InventoryService.Domain.Interfaces.Repositories
 {
@@ -7,5 +7,7 @@ namespace InventoryService.Domain.Interfaces.Repositories
         Task<Inventory?> GetByProductIdAsync(string productId);
         
         Task UpdateAsync(Inventory inventory);
+
+        Task<bool> DeductStockAsync(string productId, int quantity, DateTime updateTime);
     }
 }

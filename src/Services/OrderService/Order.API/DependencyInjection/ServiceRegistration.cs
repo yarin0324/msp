@@ -1,4 +1,4 @@
-﻿namespace OrderService.WebApi.DependencyInjection
+namespace OrderService.WebApi.DependencyInjection
 {
     /// <summary>
     /// 自動化注入: 使用Scrutor套件實作
@@ -13,25 +13,13 @@
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.Scan(scan => scan
-                // 掃描 Application 層的用例實現
-                .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces(
-                    "OrderService.Application.UseCases",
-                    "OrderService.Application.Validators"))
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-                // 掃描 Infrastructure 層的技術實現
+                // 掃描 Infrastructure 層的倉儲與連線工廠
                 .FromApplicationDependencies()
                 .AddClasses(classes => classes.InNamespaces(
                     "OrderService.Infrastructure.Common",
                     "OrderService.Infrastructure.Repositories",
                     "OrderService.Infrastructure.Messaging"))
                 .AsImplementedInterfaces()
-                .WithScopedLifetime()
-                // 掃描 WebApi 層的服務（Facade）
-                .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("OrderService.WebApi.Facades"))
-                .AsSelf()
                 .WithScopedLifetime());
 
             return services;

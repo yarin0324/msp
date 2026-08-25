@@ -1,10 +1,11 @@
-﻿namespace InventoryService.Domain.Common
+namespace InventoryService.Domain.Common
 {
     public class Result<T>
     {
         public bool IsSuccess { get; }
         public string ErrorCode { get; set; }
         public T Value { get; }
+        public T Data => Value;
         public string Message { get; }
 
         private Result(T value, string message)

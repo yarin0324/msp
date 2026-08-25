@@ -1,4 +1,4 @@
-﻿using OrderService.Application.Commands;
+using OrderService.Application.Commands;
 using OrderService.Application.Dtos;
 using OrderService.WebApi.DTOs;
 
@@ -22,6 +22,7 @@ namespace OrderService.WebApi.Mappers
                 Amount = order.Amount,
                 Currency = order.Currency,
                 CustomerId = order.CustomerId,
+                Status = order.Status,
                 Items = order.Items.Select(i =>  new GetOrderItemResponseDto
                 {
                     ProductId = i.ProductId,

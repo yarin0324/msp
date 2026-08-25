@@ -1,4 +1,4 @@
-﻿namespace OrderService.WebApi.DTOs
+namespace OrderService.WebApi.DTOs
 {
     public class GetOrderResponseDto
     {
@@ -6,6 +6,7 @@
         public decimal? Amount { get; set; }
         public string Currency { get; set; }
         public string CustomerId { get; set; }
+        public string Status { get; set; }
         public List<GetOrderItemResponseDto> Items { get; set; } = new List<GetOrderItemResponseDto>();
     }
 }

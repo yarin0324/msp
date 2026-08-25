@@ -1,4 +1,4 @@
-﻿using InventoryService.Application.Commands;
+using InventoryService.Application.Commands;
 using InventoryService.Application.Events;
 using InventoryService.Domain.Common;
 using InventoryService.Domain.Interfaces.Events;
@@ -24,34 +24,28 @@ namespace InventoryService.Application.Handlers
 
         public async Task<Result<bool>> Handle(DeductInventoryCommand request, CancellationToken cancellationToken)
         {
-            var inventory = await _inventoryRepository.GetByProductIdAsync(request.ProductId);
+            var isDeducted = await _inventoryRepository.DeductStockAsync(request.ProductId, request.Quantity, DateTime.UtcNow);
 
-            if (inventory == null)
+            if (!isDeducted)
             {
-                return Result<bool>.Failure(nameof(HttpStatusCode.InternalServerError), $"Inventory for product {request.ProductId} not found.");
-            }
+                var failureReason = $"Insufficient inventory or product not found for product {request.ProductId}. Requested: {request.Quantity}.";
 
-            if (inventory.Quantity < request.Quantity)
-            {
                 await _eventPublisher.PublishAsync(new InventoryDeductedFailedEvent
                 {
-                    //OrderId = request.OrderId,
-                    Reason = $"Insufficient inventory for product {request.ProductId}. Available: {inventory.Quantity}, Requested: {request.Quantity}."
+                    OrderId = request.OrderId,
+                    ProductId = request.ProductId,
+                    RequestedQuantity = request.Quantity,
+                    Reason = failureReason
                 });
 
-                return Result<bool>.Failure(nameof(HttpStatusCode.InternalServerError), $"Insufficient inventory for product {request.ProductId}. Available: {inventory.Quantity}, Requested: {request.Quantity}.");
+                return Result<bool>.Failure(nameof(HttpStatusCode.BadRequest), failureReason);
             }
-
-            inventory.Quantity -= request.Quantity;
-            inventory.UpdateTime = DateTime.Now;
-
-            //await _inventoryRepository.UpdateAsync(inventory);
 
             await _eventPublisher.PublishAsync(new InventoryDeductedEvent
             {
-                //OrderId = request.OrderId,
+                OrderId = request.OrderId,
                 ProductId = request.ProductId,
-                Quantity = request.Quantity,
+                Quantity = request.Quantity
             });
 
             return Result<bool>.Success(true);

@@ -1,4 +1,4 @@
-﻿using OrderService.Application.Dtos;
+using OrderService.Application.Dtos;
 using OrderService.Application.Interfaces;
 using OrderService.Application.Queries;
 using OrderService.Domain.Common;
@@ -31,6 +31,7 @@ namespace OrderService.Application.UseCases
                     Amount = order.Amount,
                     CustomerId = order.CustomerId,
                     Currency = order.Currency,
+                    Status = order.Status.ToString(),
                     CreateTime = order.CreateTime,
                     Items = order.Items.Select(i => new OrderItemDto()
                     {

@@ -1,10 +1,11 @@
-﻿namespace OrderService.Domain.Common
+namespace OrderService.Domain.Common
 {
     public class Result<T>
     {
         public bool IsSuccess { get; }
         public string ErrorCode { get; set; }
         public T Value { get; }
+        public T Data => Value;
         public string Message { get; }
 
         private Result(T value, string message)
